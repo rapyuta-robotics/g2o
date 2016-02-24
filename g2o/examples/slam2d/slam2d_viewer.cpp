@@ -27,21 +27,6 @@
 #include <iostream>
 using namespace std;
 
-// some macro helpers for identifying the version number of QGLViewer
-// QGLViewer changed some parts of its API in version 2.6.
-// The following preprocessor hack accounts for this. THIS SUCKS!!!
-#if (((QGLVIEWER_VERSION & 0xff0000) >> 16) >= 2 && ((QGLVIEWER_VERSION & 0x00ff00) >> 8) >= 6)
-#define qglv_real qreal
-#else
-#define qglv_real float
-#endif
-
-// Again, some API changes in QGLViewer which produce annoying text in the console
-// if the old API is used.
-#if (((QGLVIEWER_VERSION & 0xff0000) >> 16) >= 2 && ((QGLVIEWER_VERSION & 0x00ff00) >> 8) >= 5)
-#define QGLVIEWER_DEPRECATED_MOUSEBINDING
-#endif
-
 namespace g2o {
 
 namespace {
@@ -54,14 +39,14 @@ namespace {
     public:
       StandardCamera() : _standard(true) {};
 
-      qglv_real zNear() const {
+      float zNear() const {
         if (_standard) 
           return 0.001f; 
         else 
           return Camera::zNear(); 
       }
 
-      qglv_real zFar() const
+      float zFar() const
       {  
         if (_standard) 
           return 1000.0f; 
@@ -194,13 +179,8 @@ void Slam2DViewer::init()
   setStateFileName(QString::null);
 
   // mouse bindings
-#ifdef QGLVIEWER_DEPRECATED_MOUSEBINDING
-  setMouseBinding(Qt::NoModifier, Qt::RightButton, CAMERA, ZOOM);
-  setMouseBinding(Qt::NoModifier, Qt::MidButton, CAMERA, TRANSLATE);
-#else
   setMouseBinding(Qt::RightButton, CAMERA, ZOOM);
   setMouseBinding(Qt::MidButton, CAMERA, TRANSLATE);
-#endif
 
   // keyboard shortcuts
   setShortcut(CAMERA_MODE, 0);
